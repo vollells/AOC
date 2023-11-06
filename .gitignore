@@ -1,0 +1,9 @@
+*
+
+# Allow Subfolders
+!*/
+
+# Allow Filetypes
+!*.cc
+!*.py
+!*.txt
