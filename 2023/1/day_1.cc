@@ -8,22 +8,19 @@
 #include <vector>
 
 int main() {
-  std::fstream fs{"input_small_2.txt"};
+  std::fstream fs{"input.txt"};
   std::string input{};
   int countP1 = 0;
   int countP2 = 0;
   while (std::getline(fs, input)) {
 
+    auto itString1 = std::next(input.begin(), input.size()), itString2 = input.begin();
+    int stringValue1 = -1, stringValue2 = -1;
+    
     auto isnum = [](char c) { return std::isdigit(c); };
-
-    // Pos, value
-    auto itString1 = input.begin();
-    int stringValue1 = -1;
-    auto itString2 = input.rbegin();
-    int stringValue2 = -1;
     std::vector<std::string> values = {"one", "two",   "three", "four", "five",
                                        "six", "seven", "eight", "nine"};
-
+    
     for (int i = 1; i <= values.size(); i++) {
       auto temp = input.find(values[i - 1]);
       if (temp != input.npos &&
@@ -33,8 +30,8 @@ int main() {
       }
       temp = input.rfind(values[i - 1]);
       if (temp != input.npos &&
-          std::distance(input.rbegin(), itString2) >= temp) {
-        itString2 = std::next(input.rbegin(), temp);
+          std::distance(input.begin(), itString2) <= temp) {
+        itString2 = std::next(input.begin(), temp);
         stringValue2 = i;
       }
     }
@@ -42,15 +39,13 @@ int main() {
     auto itDigit1 = std::find_if(input.begin(), input.end(), isnum);
     auto itDigit2 = std::find_if(input.rbegin(), input.rend(), isnum);
 
-    std::cout << stringValue1 << ' ';
-    std::cout << stringValue2 << std::endl;
+    countP1 += 10 * (*itDigit1 - 48) + (*itDigit2 - 48);
+    
+    countP2 += (std::distance(input.begin(), itDigit1) <= std::distance(input.begin(), itString1) || stringValue1 == -1) ? 10 * (*itDigit1 - 48) : 10 * stringValue1;
 
-    std::string numberP1{};
-    numberP1.push_back(*itDigit1);
-    numberP1.push_back(*itDigit2);
-    std::string numberP2{};
+    countP2 += (input.size() - std::distance(input.rbegin(), itDigit2) - 1 >= std::distance(input.begin(), itString2) || stringValue2 == -1) ? (*itDigit2 - 48) : stringValue2;
 
-    countP1 += std::stoi(numberP1);
   }
   std::cout << "Part 1: " << countP1 << std::endl;
+  std::cout << "Part 2: " << countP2 << std::endl;
 }
